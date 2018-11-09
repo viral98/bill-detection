@@ -1,0 +1,43 @@
+{% extends 'receipt/common_logged_in.html' %}
+{% block receipt_active %}active{% endblock %}
+
+
+{% block body %}
+<div class="receipt-container container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <p style="font-size:300%;"><strong>{{ user.username }}'s Receipts</strong></p>
+        </div>
+        {% if receipt %}
+            {% for receipts in receipt %}
+                <div class="col-sm-4 col-lg-2">
+                    <div class="thumbnail" id = "cont">
+                        <a href="{% url 'receipt:detail' receipts.id %}">
+                            <img src="{{ receipts.receipt_picture.url }}" class="img-responsive" id = "images" alt="none"/>
+                        </a>
+                        <div class="caption">
+                            <h2>{{ receipts.CompanyName }}</h2>
+
+                            <a href="{% url 'receipt:detail' receipts.id %}" class="btn btn-primary btn-sm" role="button">View Text</a>
+
+                            
+                        </div>
+                    </div>
+                </div>
+                {% cycle '' '' '' '' '' '<div class="clearfix visible-lg"></div>' %}
+            {% endfor %}
+        {% else %}    
+            <div class="col-sm-12">
+                <br>
+                <a href="{% url 'receipt:upload_receipt' %}">
+                    <button type="button" class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus"></span>&nbsp; Add a Receipt
+                    </button>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+
+{% endblock %}

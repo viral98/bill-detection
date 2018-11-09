@@ -1,0 +1,106 @@
+{% extends 'receipt/common_logged_in.html' %}
+{% block title %}{{ receipt }}{% endblock %}
+{% block receipts_active %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid songs-container">
+    <script type = "text/javascript">
+
+        window.onload = function()
+        {
+            $( "#update_txt").hide()
+
+            var content = $('#div1').contents();
+
+            var strContent = content.find('body').html();
+            
+            var startTag = "<pre>";
+            
+            var endTag = "</pre>";
+            
+            if(strContent.indexOf(startTag) == 0) 
+            {
+                strContent = strContent.substr(startTag.length, strContent.length - startTag.length - endTag.length);
+            }
+
+            $("#update").html(strContent);
+        }
+
+    </script>
+    <div class="row">
+
+        <div class="col-sm-4 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <a href="{% url 'receipt:detail' receipt.id %}">
+                        {% if receipt.receipt_picture %}
+                            <img src="{{ receipt.receipt_picture.url }}" class="img-responsive">
+                        {% else %}
+                            <h3>No image to display</h3>
+                        {% endif %}
+                    </a>
+                    <h1>{{ receipt.CompanyName }} </h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-8 col-md-9">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Date(yyyy-mm-dd)</th>
+                            <th>Tax(%)</th>
+                            <th>Total</th>
+                        </tr>
+                        <tr>
+                            <th>{{receipt.date}}</th>
+                            <th>{{receipt.tax}}</th>
+                            <th>{{receipt.total}}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-8 col-md-9">
+            <div style = "float: left;">
+                <iframe src="/receipt/media/txt/output1.txt" frameborder="0" height="600px" width="400px" id = "div1"></iframe>
+                <br>
+                <button id = "button1" class = "btn btn-primary btn-sm"> Edit </button>
+            </div>
+            <div style = "float: right;">
+                <script>
+                    $( document ).ready( function()
+                    {
+                        $( "#button1" ).click( function()
+                        {
+                            $( "#update_txt" ).toggle( 'slow');
+                        });
+                    });
+                </script>
+                <form name = "form1" method="post" action="{% url 'receipt:update_ocr' receipt.id %}" id="update_txt">
+                {% csrf_token %}
+                 RECEIPT OUTPUT EDITOR(dd-mm-yyyy)
+                <br/>
+                <textarea name="update" id = "update" rows="40" cols="50" form="update_txt" ></textarea>
+                <br/>
+                <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
